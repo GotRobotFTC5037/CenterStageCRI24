@@ -69,9 +69,11 @@ public class blueAuto extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

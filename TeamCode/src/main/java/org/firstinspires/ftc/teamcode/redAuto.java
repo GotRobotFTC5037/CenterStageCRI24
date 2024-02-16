@@ -69,9 +69,10 @@ public class redAuto extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -82,7 +83,7 @@ public class redAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory toDetection = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(7, 22),
+                .lineTo(new Vector2d(3, 25),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(20))
                 .build();
@@ -110,18 +111,19 @@ public class redAuto extends LinearOpMode {
             telemetry.addData("Running:", "Center");
         }
         telemetry.update();
+        propPosition = redAuto.propPositions.CENTER;
         switch (propPosition) {
             case CENTER:
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
-                        .strafeTo(new Vector2d(0, 22))
+                        .strafeTo(new Vector2d(-3, 25))
                         .build();
                 Trajectory globalPositionCenter1 = drive.trajectoryBuilder(placePixelCenter.end())
                         .splineToConstantHeading(new Vector2d(-15, 18), 0)
-                        .splineToConstantHeading(new Vector2d(-10,55),0)
-                        .splineToConstantHeading(new Vector2d(10,45),0)
+                        .splineToConstantHeading(new Vector2d(-10,52),0)
+                        .splineToConstantHeading(new Vector2d(10,50),0)
                         .build();
                 Trajectory globalPositionCenter2 = drive.trajectoryBuilder(globalPositionCenter1.end())
-                        .lineToLinearHeading(new Pose2d(35, 42, 0))
+                        .lineToLinearHeading(new Pose2d(35, 50, 0))
                         .build();
                 drive.followTrajectory(placePixelCenter);
                 robot.transfer.setPower(-.32);
@@ -176,13 +178,13 @@ public class redAuto extends LinearOpMode {
         robot.intake.setPower(0);
         robot.transfer.setPower(0);
         Trajectory throughStageDoor = drive.trajectoryBuilder(globalPose)
-                .lineToConstantHeading(new Vector2d(55,45))
+                .lineToConstantHeading(new Vector2d(55,50))
                 .build();
         Trajectory nextToBackboard = drive.trajectoryBuilder(throughStageDoor.end())
-                .lineToLinearHeading(new Pose2d(85,40, Math.PI))
+                .lineToLinearHeading(new Pose2d(90,50, Math.PI))
                 .build();
         Trajectory alignToBackboard = drive.trajectoryBuilder(nextToBackboard.end())
-                .strafeTo(new Vector2d(85,10))
+                .splineToConstantHeading(new Vector2d(70,30),0)
                 .build();
         drive.followTrajectory(throughStageDoor);
         drive.followTrajectory(nextToBackboard);
@@ -224,7 +226,7 @@ public class redAuto extends LinearOpMode {
         }
 
         Trajectory lineUpToTag = drive.trajectoryBuilder(alignToBackboard.end())
-                .strafeTo(new Vector2d(85,15 + (-(desiredTag.ftcPose.x + 7))))
+                .strafeTo(new Vector2d(70,25 + (-(desiredTag.ftcPose.x + 6))))
                 .build();
         Trajectory placePosition = drive.trajectoryBuilder(lineUpToTag.end())
                         .back(Math.abs(y) - 6,
@@ -236,7 +238,7 @@ public class redAuto extends LinearOpMode {
                 .build();
         if (targetFound) {
         drive.followTrajectory(lineUpToTag); }
-        robot.lift.setTargetPosition(750);
+        robot.lift.setTargetPosition(850);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(.7);
         drive.followTrajectory(placePosition);

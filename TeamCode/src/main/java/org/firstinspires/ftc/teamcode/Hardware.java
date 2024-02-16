@@ -50,8 +50,8 @@ public class Hardware {
     public double stripperSecondRelease = 0.1;
     public double stripperOpen = 0.85;
     public double hookDown = 0;
-    public double launchClosed = 0.5;
-    public double launchOpen = 0;
+    public double launchClosed = 0;
+    public double launchOpen = 0.5;
     public double winchAngleIntakeSide = 0.81;
     public double winchAngleDeliverySide = 0.65;
     public double droneAngleDown = 1;
@@ -105,10 +105,10 @@ public class Hardware {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 }
