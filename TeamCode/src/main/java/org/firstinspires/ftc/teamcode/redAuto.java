@@ -112,6 +112,7 @@ public class redAuto extends LinearOpMode {
         }
         telemetry.update();
         propPosition = redAuto.propPositions.CENTER;
+        DESIRED_TAG_ID = 5;
         switch (propPosition) {
             case CENTER:
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
@@ -128,6 +129,7 @@ public class redAuto extends LinearOpMode {
                 drive.followTrajectory(placePixelCenter);
                 robot.transfer.setPower(-.32);
                 sleep(450);
+                robot.transfer.setPower(0);
                 drive.followTrajectory(globalPositionCenter1);
                 drive.followTrajectory(globalPositionCenter2);
                 globalPose = globalPositionCenter2.end();
@@ -181,19 +183,21 @@ public class redAuto extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(55,50))
                 .build();
         Trajectory nextToBackboard = drive.trajectoryBuilder(throughStageDoor.end())
-                .lineToLinearHeading(new Pose2d(90,50, Math.PI))
+                .lineToLinearHeading(new Pose2d(80,45, Math.PI))
                 .build();
         Trajectory alignToBackboard = drive.trajectoryBuilder(nextToBackboard.end())
-                .splineToConstantHeading(new Vector2d(70,30),0)
+                .lineToConstantHeading(new Vector2d(70,30))
                 .build();
         drive.followTrajectory(throughStageDoor);
         drive.followTrajectory(nextToBackboard);
         drive.followTrajectory(alignToBackboard);
+        sleep(750);
 
         double timeOut = getRuntime();
         double y = 0;
+        double x = 0;
 
-        while (opModeIsActive() && !targetFound && getRuntime() < timeOut + 3) {
+        while (opModeIsActive() && !targetFound && getRuntime() < (timeOut + 3)) {
             visionPortal.resumeStreaming();
 // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -209,12 +213,15 @@ public class redAuto extends LinearOpMode {
                     } else {
                         // This tag is in the library, but we do not want to track it right now.
                         telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        telemetry.update();
                         y = 0;
                     }
                 } else {
                     // This tag is NOT in the library, so we don't have enough information to track to it.
                     telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    telemetry.update();
                     y = 0;
+                    x = 0;
                 }
             }
         }
@@ -223,10 +230,11 @@ public class redAuto extends LinearOpMode {
 
         if (targetFound) {
             y = desiredTag.ftcPose.y;
+            x = desiredTag.ftcPose.x;
         }
 
         Trajectory lineUpToTag = drive.trajectoryBuilder(alignToBackboard.end())
-                .strafeTo(new Vector2d(70,25 + (-(desiredTag.ftcPose.x + 6))))
+                .strafeTo(new Vector2d(70,15 + (-(x + 6))))
                 .build();
         Trajectory placePosition = drive.trajectoryBuilder(lineUpToTag.end())
                         .back(Math.abs(y) - 6,
