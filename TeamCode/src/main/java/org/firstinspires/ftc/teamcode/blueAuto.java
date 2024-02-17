@@ -34,19 +34,6 @@ public class blueAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     Hardware robot = new Hardware();
     private propPositions propPosition;
-    private static int DESIRED_TAG_ID;
-    /**
-     * {@link #aprilTag} is the variable to store our instance of the AprilTag processor.
-     */
-    private AprilTagProcessor aprilTag;
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-
-    /**
-     * {@link #visionPortal} is the variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
-
-    boolean targetFound     = false;    // Set to true when an AprilTag target is detected
 
     public enum propPositions {
         LEFT,
@@ -60,7 +47,6 @@ public class blueAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);
-        initAprilTag();
         robot.droneAngle.setPosition(robot.droneAngleDown);
         robot.launcherRelease.setPosition(robot.launchClosed);
         robot.stripper.setPosition(robot.stripperOpen);
@@ -74,23 +60,22 @@ public class blueAuto extends LinearOpMode {
 
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(90));
         Pose2d globalPose = new Pose2d(0, 0, Math.toRadians(90));
+        Pose2d lineUpToTagPos = new Pose2d(0, 0, Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
 
         Trajectory toDetection = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-7, 22),
+                .lineTo(new Vector2d(-3, 25),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(20))
                 .build();
 
         waitForStart();
-        visionPortal.stopStreaming();
         runtime.reset();
         if (isStopRequested()) return;
 
@@ -99,103 +84,90 @@ public class blueAuto extends LinearOpMode {
         drive.followTrajectory(toDetection);
 
         if ((robot.rightDistance.getDistance(DistanceUnit.CM) > 10.5) && (robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
-            propPosition = propPositions.RIGHT;
-            DESIRED_TAG_ID = 6;
+            propPosition = blueAuto.propPositions.RIGHT;
             telemetry.addData("Running:", "Right");
         } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) > 8) && (robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
-            propPosition = propPositions.LEFT;
-            DESIRED_TAG_ID = 4;
+            propPosition = blueAuto.propPositions.LEFT;
             telemetry.addData("Running:", "Left");
         } else {
-            propPosition = propPositions.CENTER;
-            DESIRED_TAG_ID = 5;
+            propPosition = blueAuto.propPositions.CENTER;
             telemetry.addData("Running:", "Center");
         }
         telemetry.update();
-
         switch (propPosition) {
             case CENTER:
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
-                        .strafeTo(new Vector2d(0, 22))
+                        .strafeTo(new Vector2d(3, 25))
+                        .build();
+                Trajectory globalPositionCenter1 = drive.trajectoryBuilder(placePixelCenter.end())
+                        .splineToConstantHeading(new Vector2d(15, 18), 0)
+                        .splineToConstantHeading(new Vector2d(10,52),0)
+                        .splineToConstantHeading(new Vector2d(-10,50),0)
+                        .build();
+                Trajectory globalPositionCenter2 = drive.trajectoryBuilder(globalPositionCenter1.end())
+                        .lineToLinearHeading(new Pose2d(-35, 50, 180))
                         .build();
                 drive.followTrajectory(placePixelCenter);
                 robot.transfer.setPower(-.32);
                 sleep(450);
+                robot.transfer.setPower(0);
+                drive.followTrajectory(globalPositionCenter1);
+                drive.followTrajectory(globalPositionCenter2);
+                globalPose = globalPositionCenter2.end();
+                break;
+            case RIGHT:
+                Trajectory placePixelRight = drive.trajectoryBuilder(toDetection.end())
+                        .strafeTo(new Vector2d(-15, 24))
+                        .build();
+                Trajectory underTruss = drive.trajectoryBuilder(placePixelRight.end())
+                        .strafeTo(new Vector2d(-27, 24))
+                        .build();
+                Trajectory throughTruss = drive.trajectoryBuilder(underTruss.end())
+                        .lineToLinearHeading(new Pose2d(-27, 52, Math.toRadians(90)))
+                        .build();
+                Trajectory globalPositionRight = drive.trajectoryBuilder(throughTruss.end())
+                        .lineToLinearHeading(new Pose2d(-50, 48, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(placePixelRight);
+                robot.transfer.setPower(-.28);
+                sleep(650);
+                drive.followTrajectory(underTruss);
+                drive.followTrajectory(throughTruss);
+                drive.followTrajectory(globalPositionRight);
+                globalPose = globalPositionRight.end();
                 break;
             case LEFT:
                 Trajectory placePixelLeft = drive.trajectoryBuilder(toDetection.end())
-                        .strafeTo(new Vector2d(-17, 22))
+                        .splineToConstantHeading(new Vector2d(9, 15), 0)
+                        .build();
+                Trajectory lineUp = drive.trajectoryBuilder(placePixelLeft.end())
+                        .strafeTo(new Vector2d(-1,15))
+                        .build();
+                Trajectory lineUpStageDoor = drive.trajectoryBuilder(lineUp.end())
+                        .lineTo(new Vector2d(-1, 48))
+                        .build();
+                Trajectory globalPositionLeft = drive.trajectoryBuilder(lineUpStageDoor.end())
+                        .splineToLinearHeading(new Pose2d(-35,48, Math.toRadians(180)),0)
                         .build();
                 drive.followTrajectory(placePixelLeft);
                 robot.transfer.setPower(-.32);
                 sleep(450);
-                break;
-            case RIGHT:
-                Trajectory placePixelRight = drive.trajectoryBuilder(toDetection.end())
-                        .splineToConstantHeading(new Vector2d(-7, 15), 0)
-                        .build();
-
-                drive.followTrajectory(placePixelRight);
-                robot.transfer.setPower(-.32);
-                sleep(450);
+                drive.followTrajectory(lineUp);
+                drive.followTrajectory(lineUpStageDoor);
+                drive.followTrajectory(globalPositionLeft);
+                globalPose = globalPositionLeft.end();
                 break;
         }
         robot.intake.setPower(0);
         robot.transfer.setPower(0);
-    }
-
-
-    private void initAprilTag() {
-
-        // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder()
-                //.setDrawAxes(false)
-                //.setDrawCubeProjection(false)
-                .setDrawTagOutline(true)
-                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.RADIANS)
-
-                // == CAMERA CALIBRATION ==
-                // If you do not manually specify calibration parameters, the SDK will attempt
-                // to load a predefined calibration for your camera.
-                .setLensIntrinsics(911.384, 911.384, 605.325, 382.676) /**Parameters for Arducam**/
-
-                // ... these parameters are fx, fy, cx, cy.
-
+        Trajectory throughStageDoor = drive.trajectoryBuilder(globalPose)
+                .lineToLinearHeading(new Pose2d(-50,45, 6.1))
                 .build();
+        Trajectory nextToBackboard = drive.trajectoryBuilder(throughStageDoor.end())
+                .back(35)
+                .build();
+        drive.followTrajectory(throughStageDoor);
+        drive.followTrajectory(nextToBackboard);
 
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-
-        builder.setCamera(robot.webcam);
-
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1280, 800));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Disable or re-enable the aprilTag processor at any time.
-        //visionPortal.setProcessorEnabled(aprilTag, true);
-
-    }   // end method initAprilTag()
-
+    }
 }
