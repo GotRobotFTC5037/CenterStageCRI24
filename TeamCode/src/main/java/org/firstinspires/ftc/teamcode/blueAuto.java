@@ -83,10 +83,10 @@ public class blueAuto extends LinearOpMode {
 
         drive.followTrajectory(toDetection);
 
-        if ((robot.rightDistance.getDistance(DistanceUnit.CM) > 10.5) && (robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
+        if ((robot.rightDistance.getDistance(DistanceUnit.CM) > 2) && (robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
             propPosition = blueAuto.propPositions.RIGHT;
             telemetry.addData("Running:", "Right");
-        } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) > 8) && (robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
+        } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) > 2) && (robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
             propPosition = blueAuto.propPositions.LEFT;
             telemetry.addData("Running:", "Left");
         } else {
@@ -108,14 +108,14 @@ public class blueAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(-35, 50, 180))
                         .build();
                 drive.followTrajectory(placePixelCenter);
-                robot.transfer.setPower(-.32);
+                robot.transfer.setPower(-.28);
                 sleep(450);
                 robot.transfer.setPower(0);
-                drive.followTrajectory(globalPositionCenter1);
-                drive.followTrajectory(globalPositionCenter2);
+                //drive.followTrajectory(globalPositionCenter1);
+                //drive.followTrajectory(globalPositionCenter2);
                 globalPose = globalPositionCenter2.end();
                 break;
-            case RIGHT:
+            case LEFT:
                 Trajectory placePixelRight = drive.trajectoryBuilder(toDetection.end())
                         .strafeTo(new Vector2d(-15, 24))
                         .build();
@@ -131,12 +131,13 @@ public class blueAuto extends LinearOpMode {
                 drive.followTrajectory(placePixelRight);
                 robot.transfer.setPower(-.28);
                 sleep(650);
-                drive.followTrajectory(underTruss);
-                drive.followTrajectory(throughTruss);
-                drive.followTrajectory(globalPositionRight);
+                robot.transfer.setPower(0);
+                //drive.followTrajectory(underTruss);
+                //drive.followTrajectory(throughTruss);
+                //drive.followTrajectory(globalPositionRight);
                 globalPose = globalPositionRight.end();
                 break;
-            case LEFT:
+            case RIGHT:
                 Trajectory placePixelLeft = drive.trajectoryBuilder(toDetection.end())
                         .splineToConstantHeading(new Vector2d(9, 15), 0)
                         .build();
@@ -152,22 +153,23 @@ public class blueAuto extends LinearOpMode {
                 drive.followTrajectory(placePixelLeft);
                 robot.transfer.setPower(-.32);
                 sleep(450);
-                drive.followTrajectory(lineUp);
-                drive.followTrajectory(lineUpStageDoor);
-                drive.followTrajectory(globalPositionLeft);
+                robot.transfer.setPower(0);
+                //drive.followTrajectory(lineUp);
+                //drive.followTrajectory(lineUpStageDoor);
+                //drive.followTrajectory(globalPositionLeft);
                 globalPose = globalPositionLeft.end();
                 break;
         }
         robot.intake.setPower(0);
         robot.transfer.setPower(0);
-        Trajectory throughStageDoor = drive.trajectoryBuilder(globalPose)
-                .lineToLinearHeading(new Pose2d(-50,45, 6.1))
-                .build();
-        Trajectory nextToBackboard = drive.trajectoryBuilder(throughStageDoor.end())
-                .back(35)
-                .build();
-        drive.followTrajectory(throughStageDoor);
-        drive.followTrajectory(nextToBackboard);
+//        Trajectory throughStageDoor = drive.trajectoryBuilder(globalPose)
+//                .lineToLinearHeading(new Pose2d(-50,45, 6.1))
+//                .build();
+//        Trajectory nextToBackboard = drive.trajectoryBuilder(throughStageDoor.end())
+//                .back(35)
+//                .build();
+//        drive.followTrajectory(throughStageDoor);
+//        drive.followTrajectory(nextToBackboard);
 
     }
 }

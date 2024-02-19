@@ -70,7 +70,7 @@ public class redAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory toDetection = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(3, 25),
+                .lineTo(new Vector2d(4, 29),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(20))
                 .build();
@@ -83,10 +83,12 @@ public class redAuto extends LinearOpMode {
 
         drive.followTrajectory(toDetection);
 
-        if ((robot.rightDistance.getDistance(DistanceUnit.CM) > 10.5) && (robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
+        sleep(500);
+
+        if ((robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
             propPosition = redAuto.propPositions.RIGHT;
             telemetry.addData("Running:", "Right");
-        } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) > 8) && (robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
+        } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
             propPosition = redAuto.propPositions.LEFT;
             telemetry.addData("Running:", "Left");
         } else {
