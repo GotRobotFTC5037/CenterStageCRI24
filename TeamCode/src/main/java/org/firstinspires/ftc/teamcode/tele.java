@@ -372,8 +372,8 @@ public class tele extends OpMode {
             gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
         }
 
-        telemetry.addData("Right Distance", robot.rightDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Left Distance", robot.leftDistance.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("Winch Switch", robot.winchDownSwitch.getVoltage());
         telemetry.update();
     }
 

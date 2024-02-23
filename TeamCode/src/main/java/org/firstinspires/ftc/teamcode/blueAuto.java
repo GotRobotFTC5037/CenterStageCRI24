@@ -5,6 +5,7 @@ import android.util.Size;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -92,7 +93,7 @@ public class blueAuto extends LinearOpMode {
         runtime.reset();
         if (isStopRequested()) return;
 
-        robot.intake.setPower(1);
+        robot.intake.setPower(0);
 
         drive.followTrajectory(toDetection);
 
@@ -109,23 +110,95 @@ public class blueAuto extends LinearOpMode {
             DESIRED_TAG_ID = 5;
             telemetry.addData("Running:", "Center");
         }
+        propPosition = propPositions.LEFT;
         telemetry.update();
 
         switch (propPosition) {
             case CENTER:
+                robot.stripper.setPosition(robot.stripperOpen);
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
-                        .strafeTo(new Vector2d(0, 22))
+                        .strafeTo(new Vector2d(0,22))
                         .build();
+                Trajectory globalPositionCenter1 = drive.trajectoryBuilder(placePixelCenter.end())
+                        .splineToConstantHeading(new Vector2d(15, 18), 0)
+                        .splineToConstantHeading(new Vector2d(10,43),0)
+                        .splineToConstantHeading(new Vector2d(-10,43),0)
+                        .build();
+                Trajectory globalPositionCenter2 = drive.trajectoryBuilder(globalPositionCenter1.end())
+                        .lineToLinearHeading(new Pose2d(-47, 43, 0))
+                        .build();
+                Trajectory globalPositionCenter3 = drive.trajectoryBuilder(globalPositionCenter2.end(), true)
+                        .back(40)
+                        .build();
+                Trajectory globalPositionCenter4 = drive.trajectoryBuilder(globalPositionCenter3.end(), true)
+                        .strafeRight(28.5)
+                        .build();
+                Trajectory globalPositionCenter5 = drive.trajectoryBuilder(globalPositionCenter4.end())
+                        .back(5)
+                        .build();
+
+                robot.transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.transfer.setPower(-0.25);
+
                 drive.followTrajectory(placePixelCenter);
-                robot.transfer.setPower(-.32);
-                sleep(450);
+                sleep(250);
+                drive.followTrajectory(globalPositionCenter1);
+                drive.followTrajectory(globalPositionCenter2);
+                drive.followTrajectory(globalPositionCenter3);
+
+                robot.lift.setTargetPosition(750);
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(.7);
+
+                telemetry.addData("Lift position: ", robot.lift.getCurrentPosition());
+                telemetry.update();
+
+                drive.followTrajectory(globalPositionCenter4);
+                sleep(350);
+                robot.stripper.setPosition(robot.stripperSecondRelease);
+                drive.followTrajectory(globalPositionCenter5);
+
                 break;
             case LEFT:
-                Trajectory placePixelLeft = drive.trajectoryBuilder(toDetection.end())
-                        .strafeTo(new Vector2d(-17, 22))
+                Trajectory moveBack = drive.trajectoryBuilder(toDetection.end())
+                        .back(8)
                         .build();
-                drive.followTrajectory(placePixelLeft);
-                robot.transfer.setPower(-.32);
+                Trajectory globalPosition1 = drive.trajectoryBuilder((moveBack.end()))
+                        .strafeRight(10)
+                        .build();
+                Trajectory globalPosition2 = drive.trajectoryBuilder((globalPosition1.end()))
+                        .forward(30)
+                        .build();
+                Trajectory globalPosition3 = drive.trajectoryBuilder(globalPosition2.end())
+                        .lineToLinearHeading(new Pose2d(0,-10,90))
+                        .build();
+                Trajectory globalPosition4 = drive.trajectoryBuilder(globalPosition3.end())
+                        .back(26)
+
+                        .build();
+
+
+                robot.intake.setPower(0.3);
+                drive.turn(Math.toRadians(60));
+                robot.transfer.setPower(-0.25);
+                sleep(1000);
+                robot.leftBackDrive.setPower(50);
+                robot.leftDrive.setPower(50);
+                robot.rightDrive.setPower(50);
+                robot.rightBackDrive.setPower(50);
+                drive.followTrajectory((moveBack));
+                drive.followTrajectory(globalPosition1);
+                drive.followTrajectory(globalPosition2);
+                drive.followTrajectory(globalPosition3);
+                //drive.followTrajectory(globalPosition4);
+                //drive.turn(Math.toRadians(-92));
+                //robot.lift.setTargetPosition(1350);
+                //robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //robot.lift.setPower(.7);
+                //sleep(1000);
+                //robot.stripper.setPosition(robot.stripperSecondRelease);
+
+
                 sleep(450);
                 break;
             case RIGHT:
@@ -138,8 +211,7 @@ public class blueAuto extends LinearOpMode {
                 sleep(450);
                 break;
         }
-        robot.intake.setPower(0);
-        robot.transfer.setPower(0);
+
     }
 
 

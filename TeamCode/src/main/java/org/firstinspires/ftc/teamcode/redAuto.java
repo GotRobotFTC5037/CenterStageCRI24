@@ -110,7 +110,8 @@ public class redAuto extends LinearOpMode {
             telemetry.addData("Running:", "Center");
         }
         telemetry.update();
-        switch (propPosition) {
+        DESIRED_TAG_ID = 5;
+        switch (redAuto.propPositions.CENTER) {
             case CENTER:
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
                         .strafeTo(new Vector2d(0, 22))
@@ -124,7 +125,7 @@ public class redAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(35, 42, 0))
                         .build();
                 drive.followTrajectory(placePixelCenter);
-                robot.transfer.setPower(-.32);
+                robot.transfer.setPower(-.25);
                 sleep(450);
                 drive.followTrajectory(globalPositionCenter1);
                 drive.followTrajectory(globalPositionCenter2);
@@ -144,7 +145,7 @@ public class redAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(35, 47, Math.toRadians(0)))
                         .build();
                 drive.followTrajectory(placePixelRight);
-                robot.transfer.setPower(-.32);
+                robot.transfer.setPower(-.25);
                 sleep(450);
                 drive.followTrajectory(underTruss);
                 drive.followTrajectory(throughTruss);
@@ -165,7 +166,7 @@ public class redAuto extends LinearOpMode {
                                 .lineToLinearHeading(new Pose2d(35,47, Math.toRadians(0)))
                                         .build();
                 drive.followTrajectory(placePixelLeft);
-                robot.transfer.setPower(-.32);
+                robot.transfer.setPower(-.25);
                 sleep(450);
                 drive.followTrajectory(lineUp);
                 drive.followTrajectory(lineUpStageDoor);
