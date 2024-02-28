@@ -118,7 +118,7 @@ ConceptAprilTag extends LinearOpMode {
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
-                .setLensIntrinsics(911.384, 911.384, 605.325, 382.676) /**Parameters for Arducam**/
+                .setLensIntrinsics(1087.05, 1087.05, 725.72, 454.44) /**Parameters for Arducam**/
 
                 // ... these parameters are fx, fy, cx, cy.
 

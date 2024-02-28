@@ -34,11 +34,14 @@ public class Hardware {
     public Rev2mDistanceSensor leftDistance = null;
     public TouchSensor firstPixelDetector = null;
     public TouchSensor secondPixelDetector = null;
+    public AnalogInput marker = null;
 
     public WebcamName webcam = null;
 
     public AnalogInput liftDownSwitch = null;
     public AnalogInput winchDownSwitch = null;
+
+
 
     HardwareMap hwMap = null;
 
@@ -83,6 +86,7 @@ public class Hardware {
 
         liftDownSwitch = hwMap.get(AnalogInput.class, "liftSwitch");
         winchDownSwitch = hwMap.get(AnalogInput.class, "winchSwitch");
+        marker = hwMap.get(AnalogInput.class, "marker");
 
         leftDistance = hwMap.get(Rev2mDistanceSensor.class, "ldist");
         rightDistance = hwMap.get(Rev2mDistanceSensor.class, "rdist");

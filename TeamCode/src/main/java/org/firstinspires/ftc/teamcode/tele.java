@@ -146,33 +146,6 @@ public class tele extends OpMode {
             robot.rightBackDrive.setPower(0);
         }
 
-        /*
-        if (robot.lift.getCurrentPosition() < 390 && !gamepad2.right_stick_button) {
-            if (-gamepad2.right_stick_y <= 0) {
-                if (robot.lift.getCurrentPosition() < 380) {
-                    robot.lift.setPower(.7);
-                } else {
-                    robot.lift.setPower(0);
-                }
-            } else {
-                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.lift.setPower(-gamepad2.right_stick_y);
-            }
-        } else if (robot.liftDownSwitch.getVoltage() < .5) {
-            if (-gamepad2.right_stick_y < 0) {
-            robot.lift.setPower(0);
-            robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            } else {
-            robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.setPower(-gamepad2.right_stick_y);
-            }
-        } else {
-            robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.setPower(-gamepad2.right_stick_y);
-        }
-        */
-
-
         if (robot.liftDownSwitch.getVoltage() < .5) {
             if (-gamepad2.right_stick_y < 0) {
                 robot.lift.setPower(0);
@@ -378,6 +351,7 @@ public class tele extends OpMode {
         telemetry.addData("Left Encoder",((robot.leftBackDrive.getCurrentPosition())*0.75*2*Math.PI)/8192);
         telemetry.addData("Right Encoder",((robot.rightBackDrive.getCurrentPosition())*0.75*2*Math.PI)/8192);
         telemetry.addData("Lift",robot.lift.getCurrentPosition());
+        telemetry.addData("Marker", robot.marker.getVoltage());
 
         telemetry.update();
     }
