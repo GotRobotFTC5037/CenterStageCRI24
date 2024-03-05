@@ -19,18 +19,21 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-38.5, 59.5, (3*Math.PI)/2))
                                 .waitSeconds(2) //Wait For start
-                                .lineToConstantHeading(new Vector2d(-35, 36)) //Go to detection point - Detect then set to run specific placement - render all before hand
+                                .lineToConstantHeading(new Vector2d(-35, 35)) //Go to detection point - Detect then set to run specific placement - render all before hand
                                 //Start of position specific placement
-                                .lineToConstantHeading(new Vector2d(-41, 36)) //Line up to spike mark
+                                .lineToConstantHeading(new Vector2d(-41, 35)) //Line up to spike mark
                                 .waitSeconds(2) // Place pixel
-                                .splineToConstantHeading(new Vector2d(-52, 36), 0)
-                                .splineToConstantHeading(new Vector2d(-50,10),0)
+                                .lineToConstantHeading(new Vector2d(-49, 36))
+                                .splineToConstantHeading(new Vector2d(-52,10), (3*Math.PI)/2)
+                                .lineToSplineHeading(new Pose2d(-30, 10, Math.PI))
                                 //End of position specific placement
-                                .lineToSplineHeading(new Pose2d(-30, 12, Math.PI)) //Global endpoint
-                                .lineToConstantHeading(new Vector2d(24,12))
-                                .splineToConstantHeading(new Vector2d(38,35),Math.PI/2)
-                                //.lineToLinearHeading(new Pose2d(38,30, Math.PI)) //Line up to backboard for camera detection
-                                .back(20)
+                                .lineToConstantHeading(new Vector2d(24, 12))
+                                .splineToConstantHeading(new Vector2d(38, 34),0)
+                                .lineToConstantHeading(new Vector2d(54.5,35.5))
+                                .back(2)
+                                .waitSeconds(3)
+                                .lineToLinearHeading(new Pose2d(45,36, Math.PI))
+                                .splineToConstantHeading(new Vector2d(55,10), Math.PI)
                                 //Start of position specific placement
                                 .build()
                 );
@@ -39,17 +42,24 @@ public class MeepMeepTesting {
                 .setColorScheme(new ColorSchemeBlueDark())
                 .setConstraints(40, 30, Math.toRadians(190), Math.toRadians(60), 15.45)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-38, 64, (3*Math.PI)/2))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-35, 36))
-                                .lineToConstantHeading(new Vector2d(-24, 36))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-48, 36))
-                                .splineToConstantHeading(new Vector2d(-53,10),0)
+                        drive.trajectorySequenceBuilder(new Pose2d(-38.5, 59.5, (3*Math.PI)/2))
+                                .waitSeconds(2) //Wait For start
+                                .lineToConstantHeading(new Vector2d(-35, 35)) //Go to detection point - Detect then set to run specific placement - render all before hand
+                                //Start of position specific placement
+                                .lineToConstantHeading(new Vector2d(-23, 35)) //Line up to spike mark
+                                .waitSeconds(2) // Place pixel
+                                .lineToConstantHeading(new Vector2d(-49, 36.5))
+                                .splineToConstantHeading(new Vector2d(-52,10),(3*Math.PI)/2)
                                 .lineToSplineHeading(new Pose2d(-30, 10, Math.PI))
-                                .lineToConstantHeading(new Vector2d(24,10))
-                                .splineToConstantHeading(new Vector2d(38,15),Math.PI/2)
-                                .lineToConstantHeading(new Vector2d(38,38))
+                                //End of position specific placement
+                                .lineToConstantHeading(new Vector2d(24, 12))
+                                .splineToConstantHeading(new Vector2d(38, 34),0)
+                                .lineToConstantHeading(new Vector2d(54.5,35.5))
+                                .back(2)
+                                .waitSeconds(3)
+                                .lineToLinearHeading(new Pose2d(45,36, Math.PI))
+                                .splineToConstantHeading(new Vector2d(55,10), Math.PI)
+                                //Start of position specific placement
                                 .build()
                 );
         RoadRunnerBotEntity myBotRight = new DefaultBotBuilder(meepMeep)
@@ -57,17 +67,24 @@ public class MeepMeepTesting {
                 .setColorScheme(new ColorSchemeBlueDark())
                 .setConstraints(40, 30, Math.toRadians(190), Math.toRadians(60), 15.45)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-38, 64, (3*Math.PI)/2))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-35, 36))
-                                .lineToConstantHeading(new Vector2d(-47, 36))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-35, 36))
+                        drive.trajectorySequenceBuilder(new Pose2d(-38.5, 59.5, (3*Math.PI)/2))
+                                .waitSeconds(2) //Wait For start
+                                .lineToConstantHeading(new Vector2d(-35, 35)) //Go to detection point - Detect then set to run specific placement - render all before hand
+                                //Start of position specific placement
+                                .lineToConstantHeading(new Vector2d(-47, 36))//Line up to spike mark
+                                .waitSeconds(2) // Place pixel
+                                .lineToConstantHeading(new Vector2d(-35, 35))
                                 .lineToConstantHeading(new Vector2d(-30, 10))
                                 .turn(-Math.PI/2)
-                                .lineToConstantHeading(new Vector2d(24,10))
-                                .splineToConstantHeading(new Vector2d(38,15),Math.PI/2)
-                                .lineToConstantHeading(new Vector2d(38,38))
+                                //End of position specific placement
+                                .lineToConstantHeading(new Vector2d(24, 12))
+                                .splineToConstantHeading(new Vector2d(38, 34),0)
+                                .lineToConstantHeading(new Vector2d(54.5,35.5))
+                                .back(2)
+                                .waitSeconds(3)
+                                .lineToLinearHeading(new Pose2d(45,36, Math.PI))
+                                .splineToConstantHeading(new Vector2d(55,10), Math.PI)
+                                //Start of position specific placement
                                 .build()
                 );
 
@@ -77,17 +94,13 @@ public class MeepMeepTesting {
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(40, 30, Math.toRadians(190), Math.toRadians(60), 15.45)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-38, -64, (Math.PI)/2))
+                        drive.trajectorySequenceBuilder(new Pose2d(15.5, -59.5, (Math.PI)/2))
                                 .waitSeconds(2)
-                                .lineTo(new Vector2d(-35, -36))
-                                .strafeTo(new Vector2d(-41, -36))
+                                .lineToConstantHeading(new Vector2d(13, -36))
+                                .lineToConstantHeading(new Vector2d(19, -36))
                                 .waitSeconds(2)
-                                .splineToConstantHeading(new Vector2d(-56, -36), 0)
-                                .splineToConstantHeading(new Vector2d(-53,-10),0)
-                                .lineToSplineHeading(new Pose2d(-30, -10, Math.PI))
-                                .lineToConstantHeading(new Vector2d(24,-10))
-                                .splineToConstantHeading(new Vector2d(38,-15),(3*Math.PI)/2)
-                                .lineToConstantHeading(new Vector2d(38,-38))
+                                .lineToConstantHeading(new Vector2d(19, -46))
+                                .splineToLinearHeading(new Pose2d(54.5,-35.5, Math.PI), 0)
                                 .build()
                 );
 

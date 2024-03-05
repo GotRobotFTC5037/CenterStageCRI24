@@ -232,7 +232,7 @@ public class tele extends OpMode {
         }
 
         /** Drone Launcher **/
-        if (gamepad2.y && (angleTime < (getRuntime() + 2))) {
+        if (gamepad2.y && (angleTime < (getRuntime() + 20))) {
             angleTime = getRuntime();
             launcherAngle++;
         }
