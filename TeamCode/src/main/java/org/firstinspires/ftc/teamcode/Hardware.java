@@ -53,8 +53,8 @@ public class Hardware {
     public double stripperSecondRelease = 0.1;
     public double stripperOpen = 0.85;
     public double hookDown = 0;
-    public double launchClosed = 0;
-    public double launchOpen = 0.5;
+    public double launchClosed = 0.3;
+    public double launchOpen = .1;
     public double winchAngleIntakeSide = 0.81;
     public double winchAngleDeliverySide = 0.65;
     public double droneAngleDown = 1;

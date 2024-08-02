@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
+@Disabled
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
     @Override
@@ -36,8 +38,8 @@ public class LocalizationTest extends LinearOpMode {
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("x", ((poseEstimate.getX()) / 25.4));
+            telemetry.addData("y", ((poseEstimate.getY()) / 25.4));
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
         }

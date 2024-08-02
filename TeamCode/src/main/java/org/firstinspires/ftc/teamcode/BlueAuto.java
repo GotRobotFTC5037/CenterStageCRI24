@@ -4,22 +4,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import java.util.List;
-
-@Autonomous(name="Red Auto", group="Auto")
-public class RedAuto extends LinearOpMode {
+@Autonomous(name="Blue Auto", group="Auto")
+public class BlueAuto extends LinearOpMode {
     Hardware robot = new Hardware();
 
     @Override
@@ -42,17 +35,16 @@ public class RedAuto extends LinearOpMode {
         // BACKWARD: -X
 
         Trajectory driveToDetectionPosition = drive.trajectoryBuilder(new Pose2d())
-                .lineTo(new Vector2d(34,0),
-                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(27,0,Math.toRadians(0)))
                 .build();
-
         waitForStart();
         if(isStopRequested()) return;
 
         robot.intake.setPower(0.5);
         drive.followTrajectory(driveToDetectionPosition);
+
         robot.intake.setPower(0);
+
         sleep(100);
 
         if (robot.rightDistance.getDistance(DistanceUnit.CM) < 15) {
@@ -70,21 +62,21 @@ public class RedAuto extends LinearOpMode {
         switch (propPosition) {
             case "CENTER":
                 Trajectory moveRight = drive.trajectoryBuilder(new Pose2d())
-                        .strafeRight(4)
+                        .strafeRight(3)
                         .build();
                 drive.followTrajectory(moveRight);
                 sleep(200);
-                robot.transfer.setPower(-0.31);
+                robot.transfer.setPower(-0.25);
                 sleep(500);
                 robot.transfer.setPower(0);
-                drive.turn(Math.toRadians(105));
+                drive.turn(Math.toRadians(-100));
                 Trajectory moveToBackboard = drive.trajectoryBuilder(new Pose2d())
-                        .back(32)
+                        .back(42)
                         .build();
-                Trajectory adjustRight = drive.trajectoryBuilder(new Pose2d())
-                        .strafeRight(3)
-                        .build();
-                drive.followTrajectory(adjustRight);
+               // Trajectory adjustRight = drive.trajectoryBuilder(new Pose2d())
+                 //       .strafeRight(3)
+                   //     .build();
+                //drive.followTrajectory(adjustRight);
                 drive.followTrajectory(moveToBackboard);
                 Trajectory slowlyApproachBackboard = drive.trajectoryBuilder(new Pose2d())
                         .back(6)
@@ -94,60 +86,60 @@ public class RedAuto extends LinearOpMode {
                 robot.rightDrive.setPower(0.2);
                 robot.rightBackDrive.setPower(0.2);
                 drive.followTrajectory(slowlyApproachBackboard);
-                sleep(2000);
+                sleep(1000);
                 break;
 
             case "RIGHT":
                 Trajectory adjustLeft = drive.trajectoryBuilder(new Pose2d())
-                        .strafeLeft(5)
+                        .strafeLeft(4)
                         .build();
                 drive.followTrajectory(adjustLeft);
                 drive.turn(Math.toRadians(-95));
-                robot.transfer.setPower(-0.55);
+                robot.transfer.setPower(-0.4);
                 sleep(1000);
                 robot.transfer.setPower(0);
-                Trajectory adjustRightSlowly = drive.trajectoryBuilder(new Pose2d())
-                        .strafeRight(8)
+                Trajectory adjustLeftForBackboard = drive.trajectoryBuilder(new Pose2d())
+                        .strafeRight(5)
                         .build();
-                drive.followTrajectory(adjustRightSlowly);
-                drive.turn(Math.toRadians(187));
+                drive.followTrajectory(adjustLeftForBackboard);
+                drive.turn(Math.toRadians(-18));
                 Trajectory ToBackboard = drive.trajectoryBuilder(new Pose2d())
-                        .back(42)
+                        .back(35)
                         .build();
                 drive.followTrajectory(ToBackboard);
                 Trajectory adjustForPlacement = drive.trajectoryBuilder(new Pose2d())
-                        .back(7)
+                        .back(6)
                         .build();
-                Trajectory adjustToPlace = drive.trajectoryBuilder(new Pose2d())
-                        .strafeRight(6)
-                        .build();
-                drive.followTrajectory(adjustToPlace);
                 drive.followTrajectory(adjustForPlacement);
+                sleep(1000);
                 break;
 
             case "LEFT":
-                drive.turn(Math.toRadians(90));
-                robot.transfer.setPower(-0.2);
-                sleep(350);
-                drive.turn(Math.toRadians(33));
-                robot.transfer.setPower(0);
-                Trajectory toBackboard = drive.trajectoryBuilder(new Pose2d())
-                        .back(38)
+                Trajectory adjustRightSlightly = drive.trajectoryBuilder(new Pose2d())
+                        .strafeRight(3)
                         .build();
-                Trajectory slowlyAdjustToPlace = drive.trajectoryBuilder(new Pose2d())
-                        .back(5)
-                        .build();
-                Trajectory adjustToRightForPlacement = drive.trajectoryBuilder(new Pose2d())
-                        .strafeRight(5)
-                        .build();
-                drive.followTrajectory(adjustToRightForPlacement);
-                drive.followTrajectory(toBackboard);
-                robot.leftDrive.setPower(0.2);
-                robot.leftBackDrive.setPower(0.2);
-                robot.rightDrive.setPower(0.2);
-                robot.rightBackDrive.setPower(0.2);
-                drive.followTrajectory(slowlyAdjustToPlace);
+                drive.followTrajectory(adjustRightSlightly);
+                drive.turn(Math.toRadians(95));
+                robot.transfer.setPower(-0.48);
                 sleep(1000);
+                robot.transfer.setPower(0);
+                Trajectory adjustLeftSlightly = drive.trajectoryBuilder(new Pose2d())
+                        .strafeLeft(6)
+                        .build();
+                drive.followTrajectory(adjustLeftSlightly);
+                drive.turn(Math.toRadians(-170));
+                Trajectory toBackboardBigMovement = drive.trajectoryBuilder(new Pose2d())
+                        .back(42)
+                        .build();
+                drive.followTrajectory(toBackboardBigMovement);
+                Trajectory adjustForPlacementSlightly = drive.trajectoryBuilder(new Pose2d())
+                        .back(6)
+                        .build();
+                drive.followTrajectory(adjustForPlacementSlightly);
+                Trajectory adjustToPlace = drive.trajectoryBuilder(new Pose2d())
+                        .strafeLeft(2)
+                        .build();
+                drive.followTrajectory(adjustToPlace);
                 break;
         }
 
@@ -173,37 +165,37 @@ public class RedAuto extends LinearOpMode {
         sleep(1000);
 
         Trajectory moveToParkForward = drive.trajectoryBuilder(new Pose2d())
-                .forward(10)
+                .forward(13)
                 .build();
         if (propPosition == "CENTER") {
-            Trajectory moveToParkLeft = drive.trajectoryBuilder(new Pose2d())
-                    .strafeLeft(13)
+            Trajectory moveToParkRight = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(18)
                     .build();
             Trajectory moveToParkBack = drive.trajectoryBuilder(new Pose2d())
-                    .back(12)
+                    .back(19)
                     .build();
             drive.followTrajectory(moveToParkForward);
-            drive.followTrajectory(moveToParkLeft);
+            drive.followTrajectory(moveToParkRight);
             drive.followTrajectory(moveToParkBack);
         } else if (propPosition == "RIGHT") {
-            Trajectory moveToParkLeft = drive.trajectoryBuilder(new Pose2d())
-                    .strafeLeft(11)
+            Trajectory moveToParkRight = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(20)
                     .build();
             Trajectory moveToParkBack = drive.trajectoryBuilder(new Pose2d())
-                    .back(15)
+                    .back(20)
                     .build();
             drive.followTrajectory(moveToParkForward);
-            drive.followTrajectory(moveToParkLeft);
+            drive.followTrajectory(moveToParkRight);
             drive.followTrajectory(moveToParkBack);
         } else {
-            Trajectory moveToParkLeft = drive.trajectoryBuilder(new Pose2d())
-                    .strafeLeft(21)
+            Trajectory moveToParkRight = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(12)
                     .build();
             Trajectory moveToParkBack = drive.trajectoryBuilder(new Pose2d())
-                    .back(14)
+                    .back(16)
                     .build();
             drive.followTrajectory(moveToParkForward);
-            drive.followTrajectory(moveToParkLeft);
+            drive.followTrajectory(moveToParkRight);
             drive.followTrajectory(moveToParkBack);
         }
 

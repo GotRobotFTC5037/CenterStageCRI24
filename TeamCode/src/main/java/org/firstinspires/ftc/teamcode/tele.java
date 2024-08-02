@@ -232,24 +232,6 @@ public class tele extends OpMode {
         }
 
         /** Drone Launcher **/
-        if (gamepad2.y && (angleTime < (getRuntime() + 20))) {
-            angleTime = getRuntime();
-            launcherAngle++;
-        }
-
-        switch (launcherAngle) {
-            case 0:
-                launcherAngle++;
-                break;
-            case 1:
-                robot.droneAngle.setPosition(robot.droneAngleDown);
-                break;
-            case 2:
-                robot.droneAngle.setPosition(robot.droneAngleUp);
-                break;
-            case 3:
-                launcherAngle = 1;
-        }
 
         if (gamepad2.x && gamepad2.b) {
             robot.launcherRelease.setPosition(robot.launchOpen);
